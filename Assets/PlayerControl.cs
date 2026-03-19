@@ -2,58 +2,48 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
-    
-    public KeyCode moveUp = KeyCode.W;      
+    public KeyCode moveUp = KeyCode.W;
     public KeyCode moveDown = KeyCode.S;
-    public KeyCode moveLeft = KeyCode.A;    
+    public KeyCode moveLeft = KeyCode.A;
     public KeyCode moveRight = KeyCode.D;
-    public float speed = 3.0f;             
+    public KeyCode shootKey = KeyCode.Space;
+
+    public float speed = 3.0f;
+
     private float boundY = 2.0f;
-    private float boundX = 4.3f;            
+    private float boundX = 4.3f;
+
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+
     private Rigidbody2D rb2d;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        var vel = rb2d.linearVelocity;                // Acessa a velocidade da raquete
-        if (Input.GetKey(moveUp)) {             // Velocidade da Raquete para ir para cima
-            vel.y = speed;
-        }
-        else if (Input.GetKey(moveDown)) {      // Velocidade da Raquete para ir para cima
-            vel.y = -speed;                    
-        }
-        else if (Input.GetKey(moveLeft)) {      // Velocidade da Raquete para ir para cima
-            vel.x = -speed;                    
-        }
-        else if (Input.GetKey(moveRight)) {      // Velocidade da Raquete para ir para cima
-            vel.x = speed;                    
-        }
-        else {
-            vel.y = 0;                          // Velociade para manter a raquete parada
-            vel.x = 0;  
-        }
-        rb2d.linearVelocity = vel;                    // Atualizada a velocidade da raquete
+        if (GameManager.instance.isGameEnded) return;
 
-        var pos = transform.position;           // Acessa a Posição da raquete
-        if (pos.y > boundY) {                  
-            pos.y = boundY;                     // Corrige a posicao da raquete caso ele ultrapasse o limite superior
-        }
-        else if (pos.y < -boundY) {
-            pos.y = -boundY;                    // Corrige a posicao da raquete caso ele ultrapasse o limite inferior
-        }
-        if (pos.x > boundX) {                  
-            pos.x = boundX;                     // Corrige a posicao da raquete caso ele ultrapasse o limite superior
-        }
-        else if (pos.x < -boundX) {
-            pos.x = -boundX;                    // Corrige a posicao da raquete caso ele ultrapasse o limite inferior
-        }
-        transform.position = pos;               // Atualiza a posição da raquete
+        Vector2 vel = Vector2.zero;
 
+        if (Input.GetKey(moveUp)) vel.y = speed;
+        if (Input.GetKey(moveDown)) vel.y = -speed;
+        if (Input.GetKey(moveLeft)) vel.x = -speed;
+        if (Input.GetKey(moveRight)) vel.x = speed;
+
+        rb2d.linearVelocity = vel;
+
+        if (Input.GetKeyDown(shootKey))
+        {
+            Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         }
+
+        Vector3 pos = transform.position;
+        pos.y = Mathf.Clamp(pos.y, -boundY, boundY);
+        pos.x = Mathf.Clamp(pos.x, -boundX, boundX);
+        transform.position = pos;
+    }
 }
