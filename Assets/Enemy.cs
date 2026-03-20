@@ -9,10 +9,10 @@ public class Enemy : MonoBehaviour
         if (GameManager.instance.isGameEnded) return;
 
         transform.Translate(Vector2.left * speed * Time.deltaTime);
-
-        if (transform.position.x < -10f)
+        Debug.Log(transform.position.x);
+        if (transform.position.x < -5f)
         {
-            Destroy(gameObject);
+            Respawn();
         }
     }
 
@@ -22,5 +22,12 @@ public class Enemy : MonoBehaviour
         {
             GameManager.instance.GameOver();
         }
+    }
+    
+    void Respawn()
+    {
+        Debug.Log("RESPAWNANDO");
+        float randomY = Random.Range(-4f, 4f);
+        transform.position = new Vector2(10f, randomY);
     }
 }
