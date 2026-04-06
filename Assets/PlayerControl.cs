@@ -8,42 +8,47 @@ public class PlayerControl : MonoBehaviour
     public KeyCode moveRight = KeyCode.D;
     public KeyCode shootKey = KeyCode.Space;
 
-    public float speed = 3.0f;
+    public float speed = 3f;
+    public float boundY = 2f;
+    public float boundX = 4.3f;
 
-    private float boundY = 2.0f;
-    private float boundX = 4.3f;
-
+    [Header("Tiro do player")]
     public GameObject bulletPrefab;
     public Transform firePoint;
 
-    private Rigidbody2D rb2d;
-
-    void Start()
-    {
-        rb2d = GetComponent<Rigidbody2D>();
-    }
-
     void Update()
     {
-        if (GameManager.instance.isGameEnded) return;
+        if (GameManager.instance != null && GameManager.instance.isGameEnded) return;
 
-        Vector2 vel = Vector2.zero;
+        Vector3 moveDirection = Vector3.zero;
 
-        if (Input.GetKey(moveUp)) vel.y = speed;
-        if (Input.GetKey(moveDown)) vel.y = -speed;
-        if (Input.GetKey(moveLeft)) vel.x = -speed;
-        if (Input.GetKey(moveRight)) vel.x = speed;
+        if (Input.GetKey(moveUp)) moveDirection += Vector3.up;
+        if (Input.GetKey(moveDown)) moveDirection += Vector3.down;
+        if (Input.GetKey(moveLeft)) moveDirection += Vector3.left;
+        if (Input.GetKey(moveRight)) moveDirection += Vector3.right;
 
-        rb2d.linearVelocity = vel;
-
-        if (Input.GetKeyDown(shootKey))
-        {
-            Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        }
+        transform.position += moveDirection.normalized * speed * Time.deltaTime;
 
         Vector3 pos = transform.position;
         pos.y = Mathf.Clamp(pos.y, -boundY, boundY);
         pos.x = Mathf.Clamp(pos.x, -boundX, boundX);
         transform.position = pos;
+
+        if (Input.GetKeyDown(shootKey))
+        {
+            Shoot();
+        }
+    }
+
+    void Shoot()
+    {
+        if (bulletPrefab != null && firePoint != null)
+        {
+            Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning("Bullet Prefab ou FirePoint do player não configurado.");
+        }
     }
 }

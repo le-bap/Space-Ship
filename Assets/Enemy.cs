@@ -3,16 +3,39 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public float speed = 3f;
+    public float destroyX = -12f;
+
+    [Header("Tiro do inimigo")]
+    public GameObject enemyBulletPrefab;
+    public Transform firePoint;
+    public float shootInterval = 2f;
+
+    private float shootTimer;
 
     void Update()
     {
-        if (GameManager.instance.isGameEnded) return;
+        if (GameManager.instance != null && GameManager.instance.isGameEnded) return;
 
         transform.Translate(Vector2.left * speed * Time.deltaTime);
-        Debug.Log(transform.position.x);
-        if (transform.position.x < -5f)
+
+        shootTimer += Time.deltaTime;
+        if (shootTimer >= shootInterval)
         {
-            Respawn();
+            Shoot();
+            shootTimer = 0f;
+        }
+
+        if (transform.position.x < destroyX)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void Shoot()
+    {
+        if (enemyBulletPrefab != null && firePoint != null)
+        {
+            Instantiate(enemyBulletPrefab, firePoint.position, Quaternion.identity);
         }
     }
 
@@ -20,14 +43,8 @@ public class Enemy : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.instance.GameOver();
+            if (GameManager.instance != null)
+                GameManager.instance.GameOver();
         }
-    }
-    
-    void Respawn()
-    {
-        Debug.Log("RESPAWNANDO");
-        float randomY = Random.Range(-4f, 4f);
-        transform.position = new Vector2(10f, randomY);
     }
 }

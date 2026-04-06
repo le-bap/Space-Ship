@@ -17,6 +17,14 @@ public class GameManager : MonoBehaviour
         instance = this;
     }
 
+    void Start()
+    {
+        Time.timeScale = 1f;
+
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (victoryPanel != null) victoryPanel.SetActive(false);
+    }
+
     public void SlowTime(float duration)
     {
         CancelInvoke(nameof(NormalTime));
@@ -41,8 +49,6 @@ public class GameManager : MonoBehaviour
 
         if (gameOverPanel != null)
             gameOverPanel.SetActive(true);
-
-        Debug.Log("DERROTA");
     }
 
     public void Victory()
@@ -57,8 +63,6 @@ public class GameManager : MonoBehaviour
 
         if (victoryPanel != null)
             victoryPanel.SetActive(true);
-
-        Debug.Log("VITÓRIA");
     }
 
     public void RestartGame()
