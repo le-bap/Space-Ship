@@ -8,7 +8,7 @@ public class PowerUp : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.instance.SlowTime(slowDuration);
+            GameManager.instance.SlowTime();
             Destroy(gameObject);
         }
     }

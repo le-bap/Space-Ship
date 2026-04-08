@@ -11,7 +11,7 @@ public class EnemySpawner : MonoBehaviour
     public float spawnX = 4.8f;
 
     [Header("Wave")]
-    public int enemiesPerSpawn = 4;
+    public int enemiesPerSpawn = 2;
     public float spacingY = 0.9f;
 
     void Start()
